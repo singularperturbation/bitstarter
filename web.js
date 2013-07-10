@@ -8,7 +8,7 @@ var fd = fs.openSync(path.join(process.cwd(), 'index.html'),'r');
 var length = fs.readSync(fd,buffer);
 
 app.get('/', function(request, response) {
-  response.send(buffer.toString('utf8',0,length));
+  response.send(buffer.toString('utf-8',0,length));
 });
 
 var port = process.env.PORT || 5000;
