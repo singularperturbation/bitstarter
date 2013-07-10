@@ -3,10 +3,11 @@ var buffer = new Buffer(50);
 
 var app = express.createServer(express.logger());
 var fs = require('fs');
-var path = require('path');
-var fd = fs.openSync(path.join(process.cwd(), 'index.html'),'r');
-var length = fs.readSync(fd,buffer);
-
+//var path = require('path');
+//var fd = fs.openSync(path.join(process.cwd(), 'index.html'),'r');
+//var length = fs.readSync(fd,buffer);
+buffer.write("Test of buffer","utf-8");
+var length = 15;
 app.get('/', function(request, response) {
   response.send(buffer.toString('utf-8',0,length));
 });
