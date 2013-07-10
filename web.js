@@ -7,7 +7,7 @@ var path = require('path');
 var fd = fs.openSync(path.join(process.cwd(), 'index.html'),'r');
 var length = fs.readSync(fd,buffer,500);
 app.get('/', function(request, response) {
-  response.send(buffer.toString('ascii',0,length));
+  response.send(buffer.toString('ascii'));
 });
 
 var port = process.env.PORT || 5000;
