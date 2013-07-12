@@ -84,7 +84,6 @@ var buildUrlFunc = function(checkFile){
      else{
        var checks = loadChecks(checkFile);
        var $ = cheerio.load(result);
-       console.log($);
        var checkJson = {};
        for (var ii in checks){
          var present = $(checks[ii]).length > 0;
