@@ -26,6 +26,7 @@ var program = require('commander');
 var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
+var rest = require('restler');
 
 var assertFileExists = function(infile) {
     var instr = infile.toString();
@@ -61,14 +62,56 @@ var clone = function(fn) {
     return fn.bind({});
 };
 
+function checkUrl(result){
+  if (result instanceof Error){
+    console.error(result.message);
+    process.exit(1);
+  }
+  else{
+    console.log(result);
+  }
+}
+
+// Horrible coding practice: I'm copying from function block above.
+// However, this is near deadline for this HW so I'mm doing it anyway.
+// How to fix in future (if ever): rewrite checkHtmlFile to be checkFunc() with optional file parameter
+var buildUrlFunc = function(checkFile){
+  var urlCheck = function(result){
+     if (result instanceof Error){
+       console.error(result.message);
+       process.exit(1);
+     }
+     else{
+       var checks = loadChecks(checkFile);
+       var $ = cheerio.load(result);
+       console.log($);
+       var checkJson = {};
+       for (var ii in checks){
+         var present = $(checks[ii]).length > 0;
+         checkJson[checks[ii]] = present;
+       }
+       console.log(JSON.stringify(checkJson,null,4));
+     }
+  }
+  return urlCheck;
+}
+
 if(require.main == module) {
     program
+      // Syntax here is: flags (as well as text to be displayed with --help), function to run on input, default value 
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
+        .option('-u, --url <url_address>', 'Path of url to pull in') 
         .parse(process.argv);
-    var checkJson = checkHtmlFile(program.file, program.checks);
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+    if (program.url != null){ 
+      var urlCheck = buildUrlFunc(program.checks); 
+      rest.get(program.url).on('complete',urlCheck);
+    }
+    else{
+      var checkJson = checkHtmlFile(program.file, program.checks);
+      var outJson = JSON.stringify(checkJson, null, 4);
+      console.log(outJson);
+    }
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
