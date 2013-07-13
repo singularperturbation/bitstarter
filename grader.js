@@ -102,7 +102,7 @@ if(require.main == module) {
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-u, --url <url_address>', 'Path of url to pull in') 
         .parse(process.argv);
-    if (program.url != null){ 
+    if (program.url !== null){ 
       var urlCheck = buildUrlFunc(program.checks); 
       rest.get(program.url).on('complete',urlCheck);
     }
